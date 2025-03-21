@@ -37,9 +37,10 @@ protected:
 public:
 	afx_msg void OnDestroy();
 	afx_msg void OnEnChangeEditCircleSize();
-public:
 	afx_msg void OnEnChangeEditCircleThickness();
+	afx_msg void OnBnClickedBtnReset();
+	afx_msg void OnBnClickedBtnRandom();
+	void UpdateStaticInfo(const std::vector<CPoint>& points);
 	int m_nSize;
 	int m_nThickness;
-	afx_msg void OnBnClickedBtnReset();
 };

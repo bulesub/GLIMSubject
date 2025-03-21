@@ -8,6 +8,8 @@
 #include "GLIMSubjectDlg.h"
 #include "afxdialogex.h"
 
+#include <thread>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -77,6 +79,7 @@ BEGIN_MESSAGE_MAP(CGLIMSubjectDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_CIRCLE_SIZE, &CGLIMSubjectDlg::OnEnChangeEditCircleSize)
 	ON_EN_CHANGE(IDC_EDIT_CIRCLE_THICKNESS, &CGLIMSubjectDlg::OnEnChangeEditCircleThickness)
 	ON_BN_CLICKED(IDC_BTN_RESET, &CGLIMSubjectDlg::OnBnClickedBtnReset)
+	ON_BN_CLICKED(IDC_BTN_RANDOM, &CGLIMSubjectDlg::OnBnClickedBtnRandom)
 END_MESSAGE_MAP()
 
 
@@ -122,7 +125,7 @@ BOOL CGLIMSubjectDlg::OnInitDialog()
 	m_pDlgImage = new CDlgImage(this);
 	m_pDlgImage->Create(IDD_CDlgImage, this);
 	m_pDlgImage->ShowWindow(SW_SHOW);
-	m_pDlgImage->MoveWindow(0, 0, WINDOW_SIZE_X - 230, WINDOW_SIZE_Y);
+	m_pDlgImage->MoveWindow(0, 0, WINDOW_SIZE_X - 230, WINDOW_SIZE_Y - 40);
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -195,7 +198,6 @@ void CGLIMSubjectDlg::OnEnChangeEditCircleSize()
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	UpdateData(true);
-	//std::cout << m_nSize << std::endl;
 	m_pDlgImage->m_nSize = m_nSize;
 	UpdateData(false);
 	m_pDlgImage->RefreshImage();
@@ -218,6 +220,50 @@ void CGLIMSubjectDlg::OnEnChangeEditCircleThickness()
 void CGLIMSubjectDlg::OnBnClickedBtnReset()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+	m_nSize = 0;
+	m_nThickness = 0;
+	UpdateData(false);
 	m_pDlgImage->ResetPoints();
 	m_pDlgImage->RefreshImage();
+}
+
+void RandomPoints(CDlgImage* dlgImage)
+{
+	dlgImage->RandomPoints();
+}
+
+void CGLIMSubjectDlg::OnBnClickedBtnRandom()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	std::thread _thread = std::thread(RandomPoints, m_pDlgImage);
+	_thread.detach();
+}
+
+void CGLIMSubjectDlg::UpdateStaticInfo(const std::vector<CPoint>& points)
+{
+	int size = points.size();
+	CString info;
+
+	switch (size)
+	{
+	case 3:
+		info.Format(_T("x:%d y:%d"), points[2].x, points[2].y);
+		SetDlgItemText(IDC_STATIC_P3_INFO, info);
+
+	case 2:
+		info.Format(_T("x:%d y:%d"), points[1].x, points[1].y);
+		SetDlgItemText(IDC_STATIC_P2_INFO, info);
+
+	case 1:
+		info.Format(_T("x:%d y:%d"), points[0].x, points[0].y);
+		SetDlgItemText(IDC_STATIC_P1_INFO, info);
+		break;
+
+	default:
+		info = _T("x:   y:   ");
+		SetDlgItemText(IDC_STATIC_P1_INFO, info);
+		SetDlgItemText(IDC_STATIC_P2_INFO, info);
+		SetDlgItemText(IDC_STATIC_P3_INFO, info);
+	}
 }
