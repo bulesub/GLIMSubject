@@ -1,0 +1,25 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int solution(vector<vector<int>> dots) {
+    int answer = 0;
+    
+    for (int i = 1; i < dots.size(); i++)
+    {
+        int dX1 = abs(dots[0][0] - dots[i][0]);
+        int dY1 = abs(dots[0][1] - dots[i][1]);
+        int dX2 = 0, dY2 = 0;
+        for (int j = 1; j < dots.size(); j++)
+        {
+            if (j == i) continue;
+            dX2 = abs(dots[j][0] - dX2);
+            dY2 = abs(dots[j][1] - dY2);
+        }
+            
+        if (dY1 * dX2 == dY2 * dX1) answer = 1;
+    }
+    
+    return answer;
+}

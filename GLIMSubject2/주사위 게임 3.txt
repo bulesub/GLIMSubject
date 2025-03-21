@@ -1,0 +1,85 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int solution(int a, int b, int c, int d) {
+    using namespace std;
+    int answer = 0, dice = 0;
+    vector<int> dices = vector<int>(7);
+
+    dices[a]++;
+    dices[b]++;
+    dices[c]++;
+    dices[d]++;
+
+    int maxDice = 0, maxCount = 0;
+    for (int i = 1; i < dices.size(); i++)
+    {
+        if (dices[i] > maxCount)
+            {
+                maxDice = i;
+                maxCount = dices[i];
+            }
+    }
+
+    switch (dices[maxDice])
+    {
+    case 4:
+        {
+            answer = 1111 * maxDice;
+        }
+        break;
+
+    case 3:
+        {
+            int other = 0;
+            for (int i = 1; i < dices.size(); i++)
+                if (dices[i] == 1)
+                    other = i;
+
+            answer = (10 * maxDice + other) * (10 * maxDice + other);
+        }
+        break;
+
+    case 2:
+        {
+            int other = 0;
+            bool both = false;
+            for (int i = 1; i < dices.size(); i++)
+            {
+                if (i == maxDice) continue;
+                if (dices[i] == 2)
+                {
+                    both = true;
+                    other = i;
+                }
+            }
+
+            if (both) answer = (maxDice + other) * (max(maxDice, other) - min(maxDice, other));
+            else
+            {
+                int dice1 = 0, dice2 = 0;
+                for (int i = 1; i < dices.size(); i++)
+                {
+                    if (dices[i] == 1)
+                    {
+                        if (dice1 == 0) dice1 = i;
+                        else dice2 = i;
+                    }
+                }
+
+                answer = dice1 * dice2;
+            }
+        }
+        break;
+
+    case 1:
+        {
+            answer = maxDice;
+        }
+        break;
+    }
+
+    return answer;
+}
